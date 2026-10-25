@@ -1,8 +1,8 @@
 const CONFIG = {
-  tokenAddress: "5z6soYapgMHRijx1xoENhEBSGUhBgYRamW3pCVMTpump",
+  tokenAddress: "",
   pumpFunUrl: "",
-  twitter: "https://x.com/trumpsol_x ",
-  telegram: "",
+  twitter: "https://x.com/solamc_x",
+  telegram: "https://t.me/solamc_tg",
 };
 
 function getPumpFunUrl() {
@@ -18,9 +18,9 @@ function initContract() {
   const address = CONFIG.tokenAddress;
 
   if (!address) {
-    display.textContent = "5z6soYapgMHRijx1xoENhEBSGUhBgYRamW3pCVMTpump";
+    display.textContent = "TBA";
     copyBtn.disabled = true;
-    copyBtn.title = "Contract address coming soon";
+    copyBtn.title = "Contract address TBA";
     return;
   }
 
@@ -111,7 +111,7 @@ function initConfetti() {
   if (reduce) return;
 
   const ctx = canvas.getContext("2d");
-  const colors = ["#ff7a18", "#ffb020", "#ffd56a", "#fff1c9", "#fff6f1", "#f7931a", "#c2410c"];
+  const colors = ["#fff6e8", "#f6d7a2", "#ffe08a", "#ffffff", "#ffd56a", "#ff2a2a", "#e10600"];
   let pieces = [];
   let width = 0;
   let height = 0;
@@ -126,19 +126,21 @@ function initConfetti() {
   }
 
   function makePiece(fromTop) {
-    const wide = 6 + Math.random() * 8;
+    const kernel = Math.random() > 0.18;
+    const wide = kernel ? 5 + Math.random() * 7 : 7 + Math.random() * 6;
     return {
       x: Math.random() * width,
       y: fromTop ? -20 - Math.random() * height : Math.random() * height,
       w: wide,
-      h: 8 + Math.random() * 12,
-      vy: 0.7 + Math.random() * 1.7,
-      vx: -0.45 + Math.random() * 0.9,
+      h: kernel ? 4 + Math.random() * 5 : 11 + Math.random() * 8,
+      vy: 0.55 + Math.random() * 1.5,
+      vx: -0.35 + Math.random() * 0.7,
       rot: Math.random() * Math.PI,
-      vr: -0.06 + Math.random() * 0.12,
+      vr: -0.04 + Math.random() * 0.08,
       color: colors[Math.floor(Math.random() * colors.length)],
       swing: Math.random() * Math.PI * 2,
-      swingSpeed: 0.015 + Math.random() * 0.02,
+      swingSpeed: 0.012 + Math.random() * 0.02,
+      kernel,
     };
   }
 
@@ -166,7 +168,17 @@ function initConfetti() {
       ctx.translate(piece.x, piece.y);
       ctx.rotate(piece.rot);
       ctx.fillStyle = piece.color;
-      ctx.fillRect(-piece.w / 2, -piece.h / 2, piece.w, piece.h);
+      if (piece.kernel) {
+        ctx.beginPath();
+        ctx.ellipse(0, 0, piece.w, piece.h, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+        ctx.beginPath();
+        ctx.ellipse(-piece.w * 0.25, -piece.h * 0.2, piece.w * 0.35, piece.h * 0.35, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillRect(-piece.w / 2, -piece.h / 2, piece.w, piece.h);
+      }
       ctx.restore();
     });
     requestAnimationFrame(frame);
